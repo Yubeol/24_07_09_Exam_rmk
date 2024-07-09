@@ -1,0 +1,56 @@
+package org.koreait;
+
+import org.koreait.System.controller.Container;
+import org.koreait.Motivation.controller.MotivationController;
+import org.koreait.System.controller.SystemController;
+
+public class App {
+
+    byte system_status = 1;
+
+    public void run() {
+        System.out.println("== 명언 앱 실행 ==");
+
+        SystemController systemController = new SystemController();
+        MotivationController motivationController = new MotivationController();
+
+        while (system_status == 1) {
+            System.out.print("명령어) ");
+            String cmd = Container.getScanner().nextLine().trim();
+
+            if (cmd.length() == 0) {
+                System.out.println("명령어) ");
+                continue;
+            }
+
+            org.koreait.Rq rq = new org.koreait.Rq(cmd);
+
+            if (rq.getErrMsg().equals("오타 있음(id)")) {
+                continue;
+            }
+
+            switch (rq.getActionMethod()) {
+                case "exit":
+                    systemController.exit();
+                    system_status = 0;
+                    break;
+                case "add":
+                    motivationController.등록();
+                    break;
+                case "list":
+                    motivationController.목록();
+                    break;
+                case "delete":
+                    motivationController.삭제(rq);
+                    break;
+                case "edit":
+                    motivationController.수정(rq);
+                    break;
+                default:
+                    System.out.println("사용할 수 없는 명령어입니다");
+                    break;
+            }
+
+        }
+    }
+}
